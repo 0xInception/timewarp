@@ -1,0 +1,546 @@
+{
+	"activePlayer": {
+		"abilities": {
+			"E": {
+				"abilityLevel": 1,
+				"displayName": "Tantrum",
+				"id": "Tantrum",
+				"rawDescription": "GeneratedTip_Spell_Tantrum_Description",
+				"rawDisplayName": "GeneratedTip_Spell_Tantrum_DisplayName"
+			},
+			"Passive": {
+				"displayName": "Cursed Touch",
+				"id": "AmumuP",
+				"rawDescription": "GeneratedTip_Passive_AmumuP_Description",
+				"rawDisplayName": "GeneratedTip_Passive_AmumuP_DisplayName"
+			},
+			"Q": {
+				"abilityLevel": 2,
+				"displayName": "Bandage Toss",
+				"id": "BandageToss",
+				"rawDescription": "GeneratedTip_Spell_BandageToss_Description",
+				"rawDisplayName": "GeneratedTip_Spell_BandageToss_DisplayName"
+			},
+			"R": {
+				"abilityLevel": 1,
+				"displayName": "Curse of the Sad Mummy",
+				"id": "CurseoftheSadMummy",
+				"rawDescription": "GeneratedTip_Spell_CurseoftheSadMummy_Description",
+				"rawDisplayName": "GeneratedTip_Spell_CurseoftheSadMummy_DisplayName"
+			},
+			"W": {
+				"abilityLevel": 2,
+				"displayName": "Despair",
+				"id": "AuraofDespair",
+				"rawDescription": "GeneratedTip_Spell_AuraofDespair_Description",
+				"rawDisplayName": "GeneratedTip_Spell_AuraofDespair_DisplayName"
+			}
+		},
+		"championStats": {
+			"abilityHaste": 0.0,
+			"abilityPower": 18.0,
+			"armor": 48.80000305175781,
+			"armorPenetrationFlat": 0.0,
+			"armorPenetrationPercent": 1.0,
+			"attackDamage": 72.01000213623047,
+			"attackRange": 125.0,
+			"attackSpeed": 0.7909381985664368,
+			"bonusArmorPenetrationPercent": 1.0,
+			"bonusMagicPenetrationPercent": 1.0,
+			"critChance": 0.0,
+			"critDamage": 200.0,
+			"currentHealth": 1116.300048828125,
+			"healShieldPower": 0.0,
+			"healthRegenRate": 2.4714999198913576,
+			"lifeSteal": 0.0,
+			"magicLethality": 0.0,
+			"magicPenetrationFlat": 0.0,
+			"magicPenetrationPercent": 1.0,
+			"magicResist": 40.09749984741211,
+			"maxHealth": 1116.300048828125,
+			"moveSpeed": 335.0,
+			"omnivamp": 0.0,
+			"physicalLethality": 0.0,
+			"physicalVamp": 0.0,
+			"resourceMax": 443.0,
+			"resourceRegenRate": 1.9144999980926514,
+			"resourceType": "MANA",
+			"resourceValue": 443.0,
+			"spellVamp": 0.0,
+			"tenacity": 5.0
+		},
+		"currentGold": 51727.23046875,
+		"fullRunes": {
+			"generalRunes": [
+				{
+					"displayName": "Aftershock",
+					"id": 8439,
+					"rawDescription": "perk_tooltip_VeteranAftershock",
+					"rawDisplayName": "perk_displayname_VeteranAftershock"
+				},
+				{
+					"displayName": "Font of Life",
+					"id": 8463,
+					"rawDescription": "perk_tooltip_FontOfLife",
+					"rawDisplayName": "perk_displayname_FontOfLife"
+				},
+				{
+					"displayName": "Bone Plating",
+					"id": 8473,
+					"rawDescription": "perk_tooltip_BonePlatingTooltip",
+					"rawDisplayName": "perk_displayname_BonePlating"
+				},
+				{
+					"displayName": "Unflinching",
+					"id": 8242,
+					"rawDescription": "perk_tooltip_Unflinching",
+					"rawDisplayName": "perk_displayname_Unflinching"
+				},
+				{
+					"displayName": "Cheap Shot",
+					"id": 8126,
+					"rawDescription": "perk_tooltip_CheapShot",
+					"rawDisplayName": "perk_displayname_CheapShot"
+				},
+				{
+					"displayName": "Ultimate Hunter",
+					"id": 8106,
+					"rawDescription": "perk_tooltip_UltimateHunter",
+					"rawDisplayName": "perk_displayname_UltimateHunter"
+				}
+			],
+			"keystone": {
+				"displayName": "Aftershock",
+				"id": 8439,
+				"rawDescription": "perk_tooltip_VeteranAftershock",
+				"rawDisplayName": "perk_displayname_VeteranAftershock"
+			},
+			"primaryRuneTree": {
+				"displayName": "Resolve",
+				"id": 8400,
+				"rawDescription": "perkstyle_tooltip_7204",
+				"rawDisplayName": "perkstyle_displayname_7204"
+			},
+			"secondaryRuneTree": {
+				"displayName": "Domination",
+				"id": 8100,
+				"rawDescription": "perkstyle_tooltip_7200",
+				"rawDisplayName": "perkstyle_displayname_7200"
+			},
+			"statRunes": [
+				{
+					"id": 5008,
+					"rawDescription": "perk_tooltip_StatModAdaptive"
+				},
+				{
+					"id": 5008,
+					"rawDescription": "perk_tooltip_StatModAdaptive"
+				},
+				{
+					"id": 5001,
+					"rawDescription": "perk_tooltip_StatModHealthScaling"
+				}
+			]
+		},
+		"level": 6,
+		"riotId": "Test Player#EUNE",
+		"riotIdGameName": "Test Player",
+		"riotIdTagLine": "EUNE",
+		"summonerName": "Amumu",
+		"teamRelativeColors": true
+	},
+	"allPlayers": [
+		{
+			"championName": "Amumu",
+			"isBot": false,
+			"isDead": false,
+			"items": [
+				{
+					"canUse": true,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Stealth Ward",
+					"itemID": 3340,
+					"price": 0,
+					"rawDescription": "GeneratedTip_Item_3340_Description",
+					"rawDisplayName": "Item_3340_Name",
+					"slot": 6
+				}
+			],
+			"level": 6,
+			"position": "NONE",
+			"rawChampionName": "game_character_displayname_Amumu",
+			"rawSkinName": "game_character_displayname_Amumu",
+			"respawnTimer": 0.0,
+			"riotId": "Test Player#EUNE",
+			"riotIdGameName": "Test Player",
+			"riotIdTagLine": "EUNE",
+			"runes": {
+				"keystone": {
+					"displayName": "Aftershock",
+					"id": 8439,
+					"rawDescription": "perk_tooltip_VeteranAftershock",
+					"rawDisplayName": "perk_displayname_VeteranAftershock"
+				},
+				"primaryRuneTree": {
+					"displayName": "Resolve",
+					"id": 8400,
+					"rawDescription": "perkstyle_tooltip_7204",
+					"rawDisplayName": "perkstyle_displayname_7204"
+				},
+				"secondaryRuneTree": {
+					"displayName": "Domination",
+					"id": 8100,
+					"rawDescription": "perkstyle_tooltip_7200",
+					"rawDisplayName": "perkstyle_displayname_7200"
+				}
+			},
+			"scores": {
+				"assists": 0,
+				"creepScore": 0,
+				"deaths": 0,
+				"kills": 0,
+				"wardScore": 0.0
+			},
+			"skinID": 0,
+			"skinName": "Amumu",
+			"summonerName": "Amumu",
+			"summonerSpells": {
+				"summonerSpellOne": {
+					"displayName": "Smite",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerSmite_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerSmite_DisplayName"
+				},
+				"summonerSpellTwo": {
+					"displayName": "Flash",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerFlash_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerFlash_DisplayName"
+				}
+			},
+			"team": "ORDER"
+		},
+		{
+			"championName": "Cassiopeia",
+			"isBot": true,
+			"isDead": false,
+			"items": [
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Doran's Ring",
+					"itemID": 1056,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_1056_Description",
+					"rawDisplayName": "Item_1056_Name",
+					"slot": 0
+				},
+				{
+					"canUse": true,
+					"consumable": true,
+					"count": 1,
+					"displayName": "Control Ward",
+					"itemID": 2055,
+					"price": 75,
+					"rawDescription": "GeneratedTip_Item_2055_Description",
+					"rawDisplayName": "Item_2055_Name",
+					"slot": 1
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Ruby Crystal",
+					"itemID": 1028,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_1028_Description",
+					"rawDisplayName": "Item_1028_Name",
+					"slot": 2
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Ruby Crystal",
+					"itemID": 1028,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_1028_Description",
+					"rawDisplayName": "Item_1028_Name",
+					"slot": 3
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Sapphire Crystal",
+					"itemID": 1027,
+					"price": 300,
+					"rawDescription": "GeneratedTip_Item_1027_Description",
+					"rawDisplayName": "Item_1027_Name",
+					"slot": 4
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Amplifying Tome",
+					"itemID": 1052,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_1052_Description",
+					"rawDisplayName": "Item_1052_Name",
+					"slot": 5
+				},
+				{
+					"canUse": true,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Stealth Ward",
+					"itemID": 3340,
+					"price": 0,
+					"rawDescription": "GeneratedTip_Item_3340_Description",
+					"rawDisplayName": "Item_3340_Name",
+					"slot": 6
+				}
+			],
+			"level": 7,
+			"position": "BOTTOM",
+			"rawChampionName": "game_character_displayname_Cassiopeia",
+			"rawSkinName": "game_character_displayname_Cassiopeia",
+			"respawnTimer": 0.0,
+			"riotId": "Cassiopeia#BOT",
+			"riotIdGameName": "Cassiopeia",
+			"riotIdTagLine": "BOT",
+			"runes": {
+				"keystone": {
+					"displayName": "Arcane Comet",
+					"id": 8229,
+					"rawDescription": "perk_tooltip_ArcaneComet",
+					"rawDisplayName": "perk_displayname_ArcaneComet"
+				},
+				"primaryRuneTree": {
+					"displayName": "Sorcery",
+					"id": 8200,
+					"rawDescription": "perkstyle_tooltip_7202",
+					"rawDisplayName": "perkstyle_displayname_7202"
+				},
+				"secondaryRuneTree": {
+					"displayName": "Domination",
+					"id": 8100,
+					"rawDescription": "perkstyle_tooltip_7200",
+					"rawDisplayName": "perkstyle_displayname_7200"
+				}
+			},
+			"scores": {
+				"assists": 0,
+				"creepScore": 30,
+				"deaths": 1,
+				"kills": 0,
+				"wardScore": 0.0
+			},
+			"skinID": 0,
+			"skinName": "Cassiopeia",
+			"summonerName": "Cassiopeia Bot",
+			"summonerSpells": {
+				"summonerSpellOne": {
+					"displayName": "Flash",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerFlash_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerFlash_DisplayName"
+				},
+				"summonerSpellTwo": {
+					"displayName": "Ghost",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerHaste_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerHaste_DisplayName"
+				}
+			},
+			"team": "ORDER"
+		},
+		{
+			"championName": "Taric",
+			"isBot": true,
+			"isDead": false,
+			"items": [
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "World Atlas",
+					"itemID": 3865,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_3865_Description",
+					"rawDisplayName": "Item_3865_Name",
+					"slot": 0
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Kindlegem",
+					"itemID": 3067,
+					"price": 150,
+					"rawDescription": "GeneratedTip_Item_3067_Description",
+					"rawDisplayName": "Item_3067_Name",
+					"slot": 1
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Cloth Armor",
+					"itemID": 1029,
+					"price": 300,
+					"rawDescription": "GeneratedTip_Item_1029_Description",
+					"rawDisplayName": "Item_1029_Name",
+					"slot": 2
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Null-Magic Mantle",
+					"itemID": 1033,
+					"price": 400,
+					"rawDescription": "GeneratedTip_Item_1033_Description",
+					"rawDisplayName": "Item_1033_Name",
+					"slot": 3
+				},
+				{
+					"canUse": false,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Boots",
+					"itemID": 1001,
+					"price": 300,
+					"rawDescription": "GeneratedTip_Item_1001_Description",
+					"rawDisplayName": "Item_1001_Name",
+					"slot": 4
+				},
+				{
+					"canUse": true,
+					"consumable": false,
+					"count": 1,
+					"displayName": "Stealth Ward",
+					"itemID": 3340,
+					"price": 0,
+					"rawDescription": "GeneratedTip_Item_3340_Description",
+					"rawDisplayName": "Item_3340_Name",
+					"slot": 6
+				}
+			],
+			"level": 8,
+			"position": "UTILITY",
+			"rawChampionName": "game_character_displayname_Taric",
+			"rawSkinName": "game_character_displayname_Taric",
+			"respawnTimer": 0.0,
+			"riotId": "Taric#BOT",
+			"riotIdGameName": "Taric",
+			"riotIdTagLine": "BOT",
+			"runes": {
+				"keystone": {
+					"displayName": "Grasp of the Undying",
+					"id": 8437,
+					"rawDescription": "perk_tooltip_GraspOfTheUndying",
+					"rawDisplayName": "perk_displayname_GraspOfTheUndying"
+				},
+				"primaryRuneTree": {
+					"displayName": "Resolve",
+					"id": 8400,
+					"rawDescription": "perkstyle_tooltip_7204",
+					"rawDisplayName": "perkstyle_displayname_7204"
+				},
+				"secondaryRuneTree": {
+					"displayName": "Sorcery",
+					"id": 8200,
+					"rawDescription": "perkstyle_tooltip_7202",
+					"rawDisplayName": "perkstyle_displayname_7202"
+				}
+			},
+			"scores": {
+				"assists": 0,
+				"creepScore": 40,
+				"deaths": 0,
+				"kills": 1,
+				"wardScore": 0.3333333432674408
+			},
+			"skinID": 0,
+			"skinName": "Taric",
+			"summonerName": "Taric Bot",
+			"summonerSpells": {
+				"summonerSpellOne": {
+					"displayName": "Flash",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerFlash_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerFlash_DisplayName"
+				},
+				"summonerSpellTwo": {
+					"displayName": "Ignite",
+					"rawDescription": "GeneratedTip_SummonerSpell_SummonerDot_Description",
+					"rawDisplayName": "GeneratedTip_SummonerSpell_SummonerDot_DisplayName"
+				}
+			},
+			"team": "CHAOS"
+		},
+		{
+			"championName": "",
+			"isBot": true,
+			"isDead": false,
+			"items": {
+				"error": "Unable to find player"
+			},
+			"level": 1,
+			"position": "",
+			"rawChampionName": "",
+			"rawSkinName": "game_character_skin_displayname_PracticeTool_TargetDummy_1",
+			"respawnTimer": 0.0,
+			"riotId": "",
+			"riotIdGameName": "",
+			"riotIdTagLine": "",
+			"runes": {
+				"error": "Unable to find player"
+			},
+			"scores": {
+				"error": "Unable to find player"
+			},
+			"skinID": 1,
+			"skinName": "Target Dummy",
+			"summonerName": "Unknown",
+			"summonerSpells": {
+				"error": "Unable to find player"
+			},
+			"team": "CHAOS"
+		}
+	],
+	"events": {
+		"Events": [
+			{
+				"EventID": 0,
+				"EventName": "GameStart",
+				"EventTime": 0.02460954152047634
+			},
+			{
+				"EventID": 1,
+				"EventName": "MinionsSpawning",
+				"EventTime": 30.0518741607666
+			},
+			{
+				"Assisters": [],
+				"EventID": 2,
+				"EventName": "ChampionKill",
+				"EventTime": 265.26068115234377,
+				"KillerName": "Taric Bot",
+				"VictimName": "Cassiopeia Bot"
+			},
+			{
+				"EventID": 3,
+				"EventName": "FirstBlood",
+				"EventTime": 265.26068115234377,
+				"Recipient": "Taric Bot"
+			}
+		]
+	},
+	"gameData": {
+		"gameMode": "PRACTICETOOL",
+		"gameTime": 608.5392456054688,
+		"mapName": "Map11",
+		"mapNumber": 11,
+		"mapTerrain": "Default"
+	}
+}

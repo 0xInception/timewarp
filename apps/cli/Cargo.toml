@@ -1,0 +1,16 @@
+[package]
+name = "timewarp-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "timewarp"
+path = "src/main.rs"
+
+[dependencies]
+timewarp-capture.workspace = true
+timewarp-engine.workspace = true
+timewarp-league.workspace = true
+anyhow.workspace = true
+log.workspace = true
+env_logger.workspace = true

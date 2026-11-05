@@ -1,0 +1,42 @@
+[package]
+name = "timewarp-desktop"
+version.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "Timewarp"
+path = "src/main.rs"
+
+[dependencies]
+timewarp-engine.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+env_logger.workspace = true
+gpui-kit = "0.9"
+timewarp-league.workspace = true
+chrono.workspace = true
+dirs = "6"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+libc = "0.2"
+semver = "1"
+sha2 = "0.10"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+block2 = "0.6"
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSPasteboard"] }
+objc2-av-foundation = { version = "0.3", features = ["objc2-core-media", "objc2-core-video", "objc2-core-foundation", "objc2-quartz-core", "block2"] }
+objc2-core-foundation = "0.3"
+objc2-core-media = "0.3"
+objc2-core-video = "0.3"
+objc2-foundation = { version = "0.3", features = ["NSFileManager", "NSURL", "NSError", "NSString", "NSArray", "NSDictionary", "NSValue"] }
+objc2-quartz-core = "0.3"
+
+[target."cfg(unix)".dependencies]
+signal-hook = "0.3"
+
+[build-dependencies]
+serde_json.workspace = true

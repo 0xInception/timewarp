@@ -1,0 +1,14 @@
+[package]
+name = "timewarp-capture"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+log.workspace = true
+serde.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# macos_15_0 unlocks SCRecordingOutput: the OS encodes and muxes in-process
+# without frames ever crossing into our address space.
+screencapturekit = { version = "11.1", features = ["macos_15_0"] }
