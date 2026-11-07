@@ -6667,7 +6667,7 @@ checksum = "9e1c906769ad99c88eaa54e728060edef082f8e358ff32030cb7c7d315e81109"
 
 [[package]]
 name = "timewarp-capture"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "log",
@@ -6677,7 +6677,7 @@ dependencies = [
 
 [[package]]
 name = "timewarp-cli"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "env_logger",
@@ -6689,7 +6689,7 @@ dependencies = [
 
 [[package]]
 name = "timewarp-desktop"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "block2 0.6.2",
@@ -6720,7 +6720,7 @@ dependencies = [
 
 [[package]]
 name = "timewarp-engine"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "chrono",
@@ -6734,7 +6734,7 @@ dependencies = [
 
 [[package]]
 name = "timewarp-league"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "log",
@@ -6746,7 +6746,7 @@ dependencies = [
 
 [[package]]
 name = "timewarp-release"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "ring",
  "serde",

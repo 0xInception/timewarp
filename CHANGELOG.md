@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.2 (unreleased)
+## 0.1.2 (2026-11-07)
 
 - Fixed: Timewarp froze when you clicked Restart to install an update.
 - The Updates card text stays inside the card.
