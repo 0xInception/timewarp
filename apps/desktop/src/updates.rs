@@ -689,6 +689,7 @@ impl TimewarpApp {
             })
             .child(if self.config.check_updates {
                 div()
+                    .w_full()
                     .flex()
                     .items_center()
                     .gap_2()
@@ -700,6 +701,7 @@ impl TimewarpApp {
                     ))
             } else {
                 div()
+                    .w_full()
                     .flex()
                     .items_center()
                     .gap_2()
