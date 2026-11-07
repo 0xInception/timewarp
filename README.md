@@ -2,15 +2,27 @@
 
 Records your League of Legends games on macOS and helps you learn from them.
 
-![Home](docs/screenshots/home.png)
-![Reviewing a game](docs/screenshots/review.png)
-![Games](docs/screenshots/games.png)
+<p>
+  <a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="32%" alt="Home"></a>
+  <a href="docs/screenshots/review.png"><img src="docs/screenshots/review.png" width="32%" alt="Reviewing a game"></a>
+  <a href="docs/screenshots/games.png"><img src="docs/screenshots/games.png" width="32%" alt="Games"></a>
+</p>
 
-```
-cargo run --release -p timewarp-desktop
+## Install
+
+Needs macOS 15+.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/0xInception/timewarp/main/scripts/install.sh | sh
 ```
 
-Needs macOS 15+ and Screen Recording permission.
+Or download it from [Releases](https://github.com/0xInception/timewarp/releases). The app isn't
+notarized, so macOS blocks it the first time: open System Settings → Privacy & Security and click
+**Open Anyway**.
+
+<a href="docs/screenshots/open-anyway.png"><img src="docs/screenshots/open-anyway.png" width="320" alt="Open Anyway in Privacy &amp; Security"></a>
+
+To build it yourself: `cargo run --release -p timewarp-desktop`
 
 ## Local only
 

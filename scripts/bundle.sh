@@ -18,6 +18,7 @@ app=dist/Timewarp.app
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp target/release/Timewarp "$app/Contents/MacOS/Timewarp"
+cp apps/desktop/assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 sed "s/@VERSION@/$version/g" apps/desktop/Info.plist > "$app/Contents/Info.plist"
 printf 'APPL????' > "$app/Contents/PkgInfo"
 

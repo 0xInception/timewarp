@@ -2,6 +2,7 @@
 
 ## 0.1.1 (unreleased)
 
+- Timewarp has its own app icon.
 - The keyboard outline in Games and Clips only shows while you use the arrow keys.
 - Text no longer overflows the Updates card.
 

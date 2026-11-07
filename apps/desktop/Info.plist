@@ -8,6 +8,8 @@
 	<string>Timewarp</string>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.0xinception.timewarp</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleExecutable</key>
 	<string>Timewarp</string>
 	<key>CFBundlePackageType</key>
