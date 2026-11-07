@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 (unreleased)
+## 0.1.1 (2026-11-07)
 
 - Timewarp has its own app icon.
 - The keyboard outline in Games and Clips only shows while you use the arrow keys.
