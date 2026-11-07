@@ -1,5 +1,5 @@
 //! About Timewarp: version, links, what's new and acknowledgements.
-//! Opened from the app menu (Timewarp → About Timewarp), ⌘K, or Settings.
+//! Opened from the sidebar, the app menu (Timewarp → About Timewarp) or ⌘K.
 
 use gpui_kit::assets::IconName;
 use gpui_kit::prelude::FluentBuilder;
