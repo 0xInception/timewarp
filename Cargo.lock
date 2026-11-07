@@ -6715,6 +6715,7 @@ dependencies = [
  "signal-hook",
  "timewarp-engine",
  "timewarp-league",
+ "timewarp-release",
 ]
 
 [[package]]
@@ -6741,6 +6742,15 @@ dependencies = [
  "serde",
  "serde_json",
  "sysinfo 0.37.2",
+]
+
+[[package]]
+name = "timewarp-release"
+version = "0.1.0"
+dependencies = [
+ "ring",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

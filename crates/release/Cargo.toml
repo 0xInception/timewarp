@@ -1,0 +1,17 @@
+[package]
+name = "timewarp-release"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "timewarp-release"
+path = "src/main.rs"
+
+[dependencies]
+ring = "0.17"
+serde.workspace = true
+serde_json.workspace = true

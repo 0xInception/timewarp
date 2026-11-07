@@ -86,7 +86,7 @@ impl TimewarpApp {
     }
 
     fn palette_items(&self, query: &str, cx: &App) -> Vec<PaletteItem> {
-        let recording = matches!(self.status.phase, Phase::Recording | Phase::Finalizing);
+        let recording = matches!(self.status.phase, Phase::Recording | Phase::Finalizing | Phase::Armed);
         let mut all: Vec<PaletteItem> = vec![];
         let act = |title: &str, detail: &str, shortcut, icon, action| PaletteItem {
             group: "Actions",
@@ -97,7 +97,11 @@ impl TimewarpApp {
             action,
         };
         all.push(act(
-            if recording { "Stop recording" } else { "Start recording now" },
+            match self.status.phase {
+                Phase::Armed => "Stop waiting for League",
+                _ if recording => "Stop recording",
+                _ => "Record League",
+            },
             "",
             None,
             if recording { IconName::Square } else { IconName::Circle },
@@ -222,7 +226,7 @@ impl TimewarpApp {
                 self.selected_matchup = Some(key);
             }
             PaletteAction::StartStop => {
-                let recording = matches!(self.status.phase, Phase::Recording | Phase::Finalizing);
+                let recording = matches!(self.status.phase, Phase::Recording | Phase::Finalizing | Phase::Armed);
                 self.engine.send(if recording { Command::Stop } else { Command::StartManual });
             }
             PaletteAction::ToggleAutoRecord => {

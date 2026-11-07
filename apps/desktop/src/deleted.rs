@@ -109,6 +109,7 @@ pub fn trash(kind: Kind, title: Option<String>, note: &str, paths: &[PathBuf]) -
     let Some(video) = paths.first() else { return vec![] };
     let bytes = paths.iter().filter_map(|p| std::fs::metadata(p).ok()).map(|m| m.len()).sum();
     let moved = ui::trash_all(paths);
+    log::info!("moved to Trash ({kind:?}): {}", video.display());
     if moved.first().is_some_and(|(o, _)| o == video) {
         let item = Item {
             id: Local::now().timestamp_micros() as u64,
@@ -189,6 +190,9 @@ impl TimewarpApp {
         if gone.is_empty() {
             return;
         }
+        for it in &gone {
+            log::info!("left the Trash outside Timewarp ({:?}): {}", it.kind, it.title);
+        }
         let mut reload = false;
         for it in &gone {
             let put_back = it.video().is_some_and(|(o, _)| o.exists());
@@ -250,6 +254,7 @@ impl TimewarpApp {
         let mut failed = 0;
         for &id in ids {
             let Some(item) = take(id) else { continue };
+            log::info!("deleted forever ({:?}): {}", item.kind, item.title);
             for (_, in_trash) in &item.files {
                 if in_trash.exists() && std::fs::remove_file(in_trash).is_err() {
                     failed += 1;

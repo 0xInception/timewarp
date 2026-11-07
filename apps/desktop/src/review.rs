@@ -401,7 +401,7 @@ impl Review {
         &self.path
     }
 
-    fn export_clip(&mut self, start: f64, end: f64, label: String, moment: Option<&Moment>, cx: &mut Context<Self>) {
+    fn export_clip(&mut self, start: f64, end: f64, label: String, moment: Option<&Moment>, opts: timewarp_engine::ClipSettings, cx: &mut Context<Self>) {
         let (src, at) = (self.path.clone(), start);
         let dst = crate::clip::clip_path(&self.clips_dir, &self.path, &label, at + LEAD_IN.min(end - start));
         let m = &self.meta;
@@ -431,7 +431,6 @@ impl Review {
         cx.notify();
         let task = cx.background_executor().spawn({
             let dst = dst.clone();
-            let opts = self.clip_opts;
             async move {
                 crate::clip::export_with(&src, &dst, start, end, &opts)?;
                 crate::clip::write_meta(&dst, &meta);
@@ -459,15 +458,48 @@ impl Review {
 
     fn export_moment(&mut self, m: &Moment, cx: &mut Context<Self>) {
         let t = m.video_time;
-        self.export_clip((t - LEAD_IN).max(0.0), t + TAIL, m.label.clone(), Some(m), cx);
+        self.export_clip((t - LEAD_IN).max(0.0), t + TAIL, m.label.clone(), Some(m), self.clip_opts, cx);
     }
 
-    fn export_range(&mut self, cx: &mut Context<Self>) {
+    fn export_range(&mut self, opts: timewarp_engine::ClipSettings, cx: &mut Context<Self>) {
         if let (Some(a), Some(b)) = (self.clip_in, self.clip_out) {
             let (a, b) = (a.min(b), a.max(b));
             let label = format!("Clip at {}", theme::fmt_clock(a));
-            self.export_clip(a, b, label, None, cx);
+            self.export_clip(a, b, label, None, opts, cx);
         }
+        self.clip_in = None;
+        self.clip_out = None;
+    }
+
+    /// Quick picks on the Save clip button, besides the Settings default.
+    fn clip_presets(&self) -> Vec<(String, timewarp_engine::ClipSettings)> {
+        use timewarp_engine::{ClipFormat, ClipFps, ClipResolution, ClipSettings};
+        let mine = self.clip_opts;
+        let describe = |o: &ClipSettings| {
+            let mut parts = vec![];
+            if let Some(h) = o.resolution.max_height() {
+                parts.push(format!("{h}p"));
+            }
+            if o.fps == ClipFps::Fps30 {
+                parts.push("30 fps".into());
+            }
+            if let Some(mb) = o.max_mb {
+                parts.push(format!("under {mb} MB"));
+            }
+            if parts.is_empty() {
+                parts.push(if o.format == ClipFormat::Original { "original quality".into() } else { "full quality".into() });
+            }
+            parts.join(", ")
+        };
+        // Presets re-encode, so they use your codec (HEVC unless you chose H.264).
+        let format = if mine.format == ClipFormat::Shareable { ClipFormat::Shareable } else { ClipFormat::Compact };
+        let shareable = |max_mb, fps, resolution| ClipSettings { format, max_mb, fps, resolution };
+        vec![
+            (format!("My settings ({})", describe(&mine)), mine),
+            ("Discord: under 10 MB, 30 fps".into(), shareable(Some(10), ClipFps::Fps30, ClipResolution::Original)),
+            ("Small: 720p, 30 fps".into(), shareable(None, ClipFps::Fps30, ClipResolution::P720)),
+            ("Best quality: no limit".into(), shareable(None, ClipFps::Original, ClipResolution::Original)),
+        ]
     }
 
     /// Zoom the timeline by `factor` (0.5 = twice as close), around the playhead.
@@ -545,12 +577,28 @@ impl Review {
                         .text_color(theme::bg())
                         .child(icon(IconName::Scissors, 14., theme::bg()))
                         .child(format!("Save clip ({})", theme::fmt_clock((b - a).abs())))
-                        .on_click(cx.listener(|this, _, _, cx| {
-                            this.export_range(cx);
-                            this.clip_in = None;
-                            this.clip_out = None;
-                        })),
+                        .on_click(cx.listener(|this, _, _, cx| this.export_range(this.clip_opts, cx))),
                 )
+                // Other sizes for just this clip.
+                .child({
+                    let this = cx.entity().downgrade();
+                    let presets = self.clip_presets();
+                    Button::new("clip-quality")
+                        .ghost()
+                        .icon(Icon::new(IconName::ChevronDown))
+                        .tooltip("Save at another size")
+                        .dropdown_menu_with_anchor(gpui_kit::Anchor::BottomRight, move |mut menu, _, _| {
+                            for (label, opts) in presets.clone() {
+                                let this = this.clone();
+                                menu = menu.item(PopupMenuItem::new(label).on_click(move |_, _, cx| {
+                                    if let Some(r) = this.upgrade() {
+                                        r.update(cx, |r, cx| r.export_range(opts, cx));
+                                    }
+                                }));
+                            }
+                            menu
+                        })
+                })
                 .child(ui::icon_button("clip-cancel", IconName::X, 12.).on_click(cx.listener(|this, _, _, cx| {
                     this.clip_in = None;
                     this.clip_out = None;
@@ -1266,8 +1314,22 @@ impl Review {
             NoteField::Game => Some(self.game_notes.clone()),
             NoteField::Matchup => self.matchup_notes.clone(),
         };
+        // Edit what's saved now: the same notes can change on other screens.
+        let saved = {
+            let store = self.store.read(cx);
+            match field {
+                NoteField::Game => store.games.get(&self.game_key).map(|g| g.note.clone()),
+                NoteField::Matchup => self.matchup.as_ref().and_then(|m| store.matchup(&m.key)).map(|m| m.notes.clone()),
+            }
+            .unwrap_or_default()
+        };
         if let Some(e) = editor {
-            e.update(cx, |s, cx| s.focus(window, cx));
+            e.update(cx, |s, cx| {
+                if s.value() != saved.as_str() {
+                    s.set_value(saved, window, cx);
+                }
+                s.focus(window, cx)
+            });
         }
         cx.notify();
     }

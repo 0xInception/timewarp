@@ -14,10 +14,13 @@ use crate::theme;
 gpui_kit::assets::icon_assets!(
     pub AppIcons,
     [
-        Gamepad2, Sparkles, Settings, Play, Pause, FolderOpen, ChevronLeft, HardDrive, SkipBack,
-        SkipForward, Rewind, Circle, Square, Swords, Skull, Handshake, Castle, Monitor, Mic, Volume2,
-        MousePointer2, Star, StickyNote, NotebookPen, Plus, X, BookOpen, Flag, Scissors, ListVideo, Pin, ClipboardCheck, House, Ellipsis, Keyboard, Trash, Check, ChevronDown,
-        LoaderCircle, Undo2, PanelRightClose, PanelRightOpen, FolderInput, FolderOutput, ZoomIn, ZoomOut, TriangleAlert, ShieldCheck, ShieldAlert, RotateCw, ExternalLink
+        BookOpen, Bug, Castle, Check, ChevronDown, ChevronLeft, ChevronRight, Circle, ClipboardCheck,
+        Copy, Download, Ellipsis, Eraser, ExternalLink, Film, Flag, FolderInput, FolderOpen,
+        FolderOutput, Gamepad2, Github, Handshake, HardDrive, House, Info, Keyboard, ListVideo,
+        LoaderCircle, Mic, Minimize2, Monitor, MousePointer2, NotebookPen, PanelRightClose,
+        PanelRightOpen, Pause, Pencil, Pin, Play, Plus, RefreshCw, Rewind, RotateCw, Scissors,
+        Settings, ShieldAlert, ShieldCheck, SkipBack, SkipForward, Skull, Sparkles, Square, Star,
+        StickyNote, Swords, Trash, TriangleAlert, Undo2, Volume2, X, ZoomIn, ZoomOut
     ]
 );
 

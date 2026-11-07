@@ -23,6 +23,7 @@ The first version.
 
 **Clips**
 - Save any moment or range as a clip, sized to fit Discord if you want.
+- Clips are HEVC by default: about three times smaller than before. H.264 is still there for old devices.
 - Watch clips in the app; they're copied to your clipboard too.
 
 **Library and storage**
@@ -36,3 +37,4 @@ The first version.
 - ⌘K to search and run commands, ? for every shortcut.
 - Keyboard and mouse back/forward, and Finder-style selection.
 - A setup page that checks permissions and explains how to fix anything missing.
+- Update checks are off until you turn them on. Updates only when you click Update, and only releases signed with the Timewarp release key. If a new version doesn't start, the previous one is put back.

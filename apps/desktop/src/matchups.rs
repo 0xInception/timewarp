@@ -197,6 +197,7 @@ impl TimewarpApp {
                 let text = self.store.read(cx).matchup(&s.key).map(|m| m.notes.clone()).unwrap_or_default();
                 let (app1, app2) = (cx.entity().downgrade(), cx.entity().downgrade());
                 let e2 = e.clone();
+                let key = s.key.clone();
                 ui::note_card(
                     "matchup-page-note",
                     &text,
@@ -207,7 +208,15 @@ impl TimewarpApp {
                         if let Some(app) = app1.upgrade() {
                             app.update(cx, |app, cx| {
                                 app.matchup_note_editing = true;
-                                e2.update(cx, |s, cx| s.focus(window, cx));
+                                // The notes may have changed elsewhere (in a
+                                // review): always edit what's saved now.
+                                let saved = app.store.read(cx).matchup(&key).map(|m| m.notes.clone()).unwrap_or_default();
+                                e2.update(cx, |s, cx| {
+                                    if s.value() != saved.as_str() {
+                                        s.set_value(saved, window, cx);
+                                    }
+                                    s.focus(window, cx)
+                                });
                                 cx.notify();
                             });
                         }

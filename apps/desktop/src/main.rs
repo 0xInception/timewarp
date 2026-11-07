@@ -1208,7 +1208,9 @@ impl TimewarpApp {
     fn recorder_card(&self, cx: &mut Context<Self>) -> impl IntoElement {
         let s = &self.status;
         let recording = matches!(s.phase, Phase::Recording | Phase::Finalizing);
+        let armed = s.phase == Phase::Armed;
         let (title, detail): (String, Option<String>) = match s.phase {
+            Phase::Armed => ("Waiting for League".into(), Some("Records your game once it opens".into())),
             Phase::Recording => (
                 format!("Recording {}", theme::fmt_clock(s.elapsed.as_secs_f64())),
                 Some(match (&s.champion, s.markers) {
@@ -1239,7 +1241,13 @@ impl TimewarpApp {
                     .flex()
                     .items_center()
                     .gap_2()
-                    .child(div().size(px(8.)).flex_none().rounded_full().bg(if recording { theme::live() } else if self.config.auto_record { theme::assist() } else { theme::muted().opacity(0.5) }))
+                    .child(div().size(px(8.)).flex_none().rounded_full().bg(if recording || armed {
+                        theme::live()
+                    } else if self.config.auto_record {
+                        theme::assist()
+                    } else {
+                        theme::muted().opacity(0.5)
+                    }))
                     .child(div().flex_1().min_w_0().truncate().text_sm().font_weight(FontWeight::MEDIUM).child(title))
                     .child(
                         div()
@@ -1258,9 +1266,16 @@ impl TimewarpApp {
                                 11.,
                                 if recording { theme::text() } else { theme::live() },
                             ))
-                            .tooltip(ui::tip(if recording { "Stop recording" } else { "Start recording now" }))
+                            .when(armed, |d| d.bg(theme::live().opacity(0.25)))
+                            .tooltip(ui::tip(if recording {
+                                "Stop recording"
+                            } else if armed {
+                                "Cancel"
+                            } else {
+                                "Record League now, or as soon as a game opens"
+                            }))
                             .on_click(cx.listener(move |this, _, _, _| {
-                                this.engine.send(if recording { Command::Stop } else { Command::StartManual })
+                                this.engine.send(if recording || armed { Command::Stop } else { Command::StartManual })
                             })),
                     ),
             )
@@ -1702,7 +1717,7 @@ fn main() {
             window.on_window_should_close(cx, move |_, cx| {
                 let busy = matches!(
                     app.read(cx).status.phase,
-                    Phase::Recording | Phase::Finalizing | Phase::WaitingForWindow
+                    Phase::Recording | Phase::Finalizing | Phase::WaitingForWindow | Phase::Armed
                 );
                 if busy {
                     cx.hide();

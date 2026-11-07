@@ -542,11 +542,12 @@ impl TimewarpApp {
                     .child(Self::section("Clips"))
                     .child(self.setting_row(
                         "Clip format",
-                        "Shareable clips play right inside Discord and on any device. Original is instant and full quality, but uses the recording's format (HEVC), which Discord can't preview.",
+                        "Compact (HEVC) makes the smallest files and plays in Discord on most devices. Compatible (H.264) is about 30% bigger but plays everywhere, even on old PCs. Original is instant and untouched, but large.",
                         ui::segmented(
                             "clip-format",
                             &[
-                                (timewarp_engine::ClipFormat::Shareable, "Shareable (H.264)"),
+                                (timewarp_engine::ClipFormat::Compact, "Compact (HEVC)"),
+                                (timewarp_engine::ClipFormat::Shareable, "Compatible (H.264)"),
                                 (timewarp_engine::ClipFormat::Original, "Original"),
                             ],
                             self.config.clips.format,
@@ -563,13 +564,44 @@ impl TimewarpApp {
                             "clip-size",
                             &[(None, "No limit"), (Some(10), "10 MB"), (Some(50), "50 MB"), (Some(500), "500 MB")],
                             self.config.clips.max_mb,
-                            move |v, _, cx| set_clip(Box::new(move |c| c.clips.max_mb = v), cx),
+                            {
+                                let set = set_clip.clone();
+                                move |v, _, cx| set(Box::new(move |c| c.clips.max_mb = v), cx)
+                            },
+                        ),
+                    ))
+                    .child(self.setting_row(
+                        "Clip frame rate",
+                        "30 fps clips are half the frames, so they look sharper at the same file size. Good for Discord.",
+                        ui::segmented(
+                            "clip-fps",
+                            &[(timewarp_engine::ClipFps::Original, "Same as recording"), (timewarp_engine::ClipFps::Fps30, "30 fps")],
+                            self.config.clips.fps,
+                            {
+                                let set = set_clip.clone();
+                                move |v, _, cx| set(Box::new(move |c| c.clips.fps = v), cx)
+                            },
+                        ),
+                    ))
+                    .child(self.setting_row(
+                        "Clip resolution",
+                        "Smaller clips upload faster. Lowering the frame rate or resolution always saves as Shareable (H.264).",
+                        ui::segmented(
+                            "clip-res",
+                            &[
+                                (timewarp_engine::ClipResolution::Original, "Original"),
+                                (timewarp_engine::ClipResolution::P1080, "1080p"),
+                                (timewarp_engine::ClipResolution::P720, "720p"),
+                                (timewarp_engine::ClipResolution::P480, "480p"),
+                            ],
+                            self.config.clips.resolution,
+                            move |v, _, cx| set_clip(Box::new(move |c| c.clips.resolution = v), cx),
                         ),
                     ))
                     .child(Self::section("Updates"))
                     .child(self.setting_row(
                         "Check for updates automatically",
-                        "Once a day, Timewarp looks for a new version and lets you know. Nothing downloads or installs until you click Update in About.",
+                        "Off unless you turn it on. Then, once a day, Timewarp asks GitHub whether there's a new version and lets you know. Nothing downloads or installs until you click Update in About.",
                         self.toggle("check-updates", self.config.check_updates, |c, v| c.check_updates = v, cx),
                     ))
                     .child(Self::section("Permissions"))

@@ -141,6 +141,7 @@ impl TimewarpApp {
                 },
             ),
             Phase::WaitingForWindow => ("Match starting".into(), "Recording begins when the game window opens.".into()),
+            Phase::Armed => ("Waiting for League".into(), "Recording starts when your game opens. Only League is recorded.".into()),
             Phase::Finalizing => ("Saving your game".into(), "Almost done.".into()),
             _ => return None,
         };

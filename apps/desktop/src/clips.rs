@@ -8,6 +8,8 @@ use std::time::{Duration, Instant};
 
 use gpui_kit::assets::IconName;
 use gpui_kit::component::Icon;
+use gpui_kit::component::button::{Button, ButtonVariants};
+use gpui_kit::component::menu::DropdownMenu;
 use gpui_kit::component::input::{Input, InputEvent, InputState};
 use gpui_kit::component::menu::{ContextMenuExt, PopupMenuItem};
 use gpui_kit::prelude::FluentBuilder;
@@ -27,6 +29,8 @@ pub enum ClipEvent {
     OpenSource(String, f64),
     Trash(PathBuf),
     Toast(String),
+    /// Re-render this clip smaller (index into `clip::shrink_presets`).
+    Shrink(PathBuf, usize),
 }
 
 pub struct ClipViewer {
@@ -179,6 +183,25 @@ impl ClipViewer {
                                 cx.emit(ClipEvent::OpenSource(m.source.clone(), m.start));
                             })),
                     )
+                })
+                .child({
+                    let this = cx.entity().downgrade();
+                    Button::new("clip-shrink")
+                        .ghost()
+                        .label("Smaller copy")
+                        .icon(Icon::new(IconName::Minimize2))
+                        .tooltip("Re-render this clip smaller, e.g. under 10 MB for Discord")
+                        .dropdown_menu_with_anchor(gpui_kit::Anchor::TopRight, move |mut menu, _, _| {
+                            for (i, (label, _, _)) in clip::shrink_presets(Default::default()).into_iter().enumerate() {
+                                let this = this.clone();
+                                menu = menu.item(PopupMenuItem::new(label).on_click(move |_, _, cx| {
+                                    if let Some(v) = this.upgrade() {
+                                        v.update(cx, |v, cx| cx.emit(ClipEvent::Shrink(v.clip.path.clone(), i)));
+                                    }
+                                }));
+                            }
+                            menu
+                        })
                 })
                 .child(
                     ui::ghost_button("clip-rename")
@@ -420,6 +443,7 @@ impl TimewarpApp {
                 this.trash_clip(path, cx);
             }
             ClipEvent::Toast(text) => this.toast(IconName::ClipboardCheck, text.clone(), None, cx),
+            ClipEvent::Shrink(path, preset) => this.shrink_clip(path.clone(), *preset, cx),
             ClipEvent::OpenSource(source, t) => {
                 if let Some(i) = this.games.iter().position(|g| &crate::store::game_key(g) == source) {
                     let t = *t;
@@ -572,7 +596,7 @@ impl TimewarpApp {
                 let path = c.path.clone();
                 move |menu, _, _| {
                     let (p1, p2, p3, app1, app2) = (path.clone(), path.clone(), path.clone(), app.clone(), app.clone());
-                    menu.item(PopupMenuItem::new("Copy").icon(Icon::new(IconName::ClipboardCheck)).on_click(move |_, _, cx| {
+                    let mut menu = menu.item(PopupMenuItem::new("Copy").icon(Icon::new(IconName::ClipboardCheck)).on_click(move |_, _, cx| {
                         clip::copy_file_to_clipboard(&p1);
                         if let Some(a) = app1.upgrade() {
                             a.update(cx, |a, cx| a.toast(IconName::ClipboardCheck, "Copied. Paste it into Discord.", None, cx));
@@ -581,7 +605,18 @@ impl TimewarpApp {
                     .item(PopupMenuItem::new("Show in Finder").icon(Icon::new(IconName::FolderOpen)).on_click(move |_, _, _| {
                         let _ = std::process::Command::new("open").arg("-R").arg(&p2).spawn();
                     }))
-                    .separator()
+                    .separator();
+                    for (i, (label, _, _)) in clip::shrink_presets(Default::default()).into_iter().enumerate() {
+                        let (app, p) = (app.clone(), path.clone());
+                        menu = menu.item(PopupMenuItem::new(format!("Smaller copy: {label}")).icon(Icon::new(IconName::Minimize2)).on_click(
+                            move |_, _, cx| {
+                                if let Some(a) = app.upgrade() {
+                                    a.update(cx, |a, cx| a.shrink_clip(p.clone(), i, cx));
+                                }
+                            },
+                        ));
+                    }
+                    menu.separator()
                     .item(PopupMenuItem::new("Move to Trash").icon(Icon::new(IconName::Trash)).on_click(move |_, _, cx| {
                         if let Some(a) = app2.upgrade() {
                             a.update(cx, |a, cx| a.trash_clip(&p3, cx));
@@ -597,6 +632,65 @@ impl TimewarpApp {
             self.selected_clips.insert(path.clone());
         }
         self.clip_anchor = Some(idx);
+    }
+
+    /// Re-render a clip into a new, smaller file next to it (the original
+    /// stays). The copy lands on the clipboard, ready to paste.
+    pub fn shrink_clip(&mut self, path: PathBuf, preset: usize, cx: &mut Context<Self>) {
+        let Some(c) = self.clips.iter().find(|c| c.path == path) else { return };
+        let Some((_, suffix, opts)) = clip::shrink_presets(self.config.clips.format).into_iter().nth(preset) else { return };
+        if let Some(mb) = opts.max_mb.filter(|_| !opts.reduces()) {
+            if c.bytes <= u64::from(mb) * 1_000_000 {
+                self.toast(IconName::Check, format!("This clip is already under {mb} MB."), None, cx);
+                return;
+            }
+        }
+        let Some(duration) = clip::duration_of(&path) else {
+            self.toast(IconName::X, "Couldn't read that clip.", None, cx);
+            return;
+        };
+        let dst = clip::variant_path(&path, suffix);
+        let mut meta = c.meta.clone();
+        meta.title = format!("{} ({suffix})", c.title());
+        meta.created_at = Some(chrono::Local::now());
+        let text = format!("Making a {suffix} copy…");
+        self.toast(IconName::LoaderCircle, text.clone(), None, cx);
+        if let Some(t) = self.toasts.last_mut() {
+            t.until = Instant::now() + Duration::from_secs(300);
+        }
+        let task = cx.background_executor().spawn({
+            let dst = dst.clone();
+            async move {
+                clip::export_with(&path, &dst, 0.0, duration, &opts)?;
+                clip::write_meta(&dst, &meta);
+                clip::make_thumbnail(&dst);
+                Ok::<u64, String>(std::fs::metadata(&dst).map(|m| m.len()).unwrap_or(0))
+            }
+        });
+        cx.spawn(async move |this, cx| {
+            let result = task.await;
+            let _ = this.update(cx, |this, cx| {
+                this.toasts.retain(|t| t.text != text);
+                this.reload_clips();
+                match result {
+                    Ok(bytes) => {
+                        clip::copy_file_to_clipboard(&dst);
+                        this.toast(
+                            IconName::Scissors,
+                            format!("Smaller copy saved ({}) and copied.", ui::human_bytes(bytes)),
+                            Some(ui::ToastAction::OpenClip(dst.clone())),
+                            cx,
+                        );
+                    }
+                    Err(e) => {
+                        let _ = std::fs::remove_file(&dst);
+                        this.toast(IconName::X, format!("Couldn't make a smaller copy: {e}"), None, cx);
+                    }
+                }
+                cx.notify();
+            });
+        })
+        .detach();
     }
 
     /// Several clips to the Trash with one Undo.

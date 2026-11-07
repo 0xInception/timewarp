@@ -35,7 +35,8 @@ pub struct Config {
     pub clips: ClipSettings,
     /// Remembered layout of the desktop app.
     pub layout: Layout,
-    /// Look for new versions once a day and say so. Never installs by itself.
+    /// Look for new versions once a day and say so. Off until the user turns
+    /// it on; never installs by itself.
     pub check_updates: bool,
     /// A version the user chose to skip: no reminders for it.
     pub skip_version: Option<String>,
@@ -57,8 +58,11 @@ impl Default for Layout {
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ClipFormat {
-    /// H.264: plays inline in Discord, browsers and on Windows.
+    /// HEVC: the same picture as H.264 in about 30% fewer bytes. Plays inline
+    /// in Discord on Macs, iPhones and most recent PCs and phones.
     #[default]
+    Compact,
+    /// H.264: plays everywhere, including old PCs and browsers.
     Shareable,
     /// Cut straight from the recording, instant, same codec as recordings.
     Original,
@@ -70,6 +74,45 @@ pub struct ClipSettings {
     pub format: ClipFormat,
     /// Shrink clips until they fit (Discord free: 10 MB).
     pub max_mb: Option<u32>,
+    /// 30 fps halves the frames: sharper clips at the same file size.
+    pub fps: ClipFps,
+    /// Highest resolution for clips (smaller files, faster uploads).
+    pub resolution: ClipResolution,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ClipFps {
+    /// Same as the recording (usually 60).
+    #[default]
+    Original,
+    Fps30,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ClipResolution {
+    #[default]
+    Original,
+    P1080,
+    P720,
+    P480,
+}
+
+impl ClipResolution {
+    pub fn max_height(self) -> Option<f64> {
+        match self {
+            Self::Original => None,
+            Self::P1080 => Some(1080.0),
+            Self::P720 => Some(720.0),
+            Self::P480 => Some(480.0),
+        }
+    }
+}
+
+impl ClipSettings {
+    /// Smaller than the source in frame rate or size: needs a re-encode.
+    pub fn reduces(&self) -> bool {
+        self.fps == ClipFps::Fps30 || self.resolution != ClipResolution::Original
+    }
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -150,7 +193,7 @@ impl Default for Config {
             record: RecordFilter::All,
             clips: ClipSettings::default(),
             layout: Layout::default(),
-            check_updates: true,
+            check_updates: false,
             skip_version: None,
         }
     }
@@ -186,6 +229,9 @@ pub enum Phase {
     Idle,
     /// Game process exists but its window is not capturable yet.
     WaitingForWindow,
+    /// Record was pressed with no game running: recording starts as soon as
+    /// League's game window appears. Only League is ever recorded.
+    Armed,
     Recording,
     Finalizing,
     /// A match is running but the record filter excludes it.
@@ -450,6 +496,8 @@ struct Engine {
     session: Option<Session>,
     /// Suppresses auto-record for the current match after a manual stop.
     suppressed_pid: Option<u32>,
+    /// Record pressed before the game was up: start when it appears.
+    armed: bool,
     /// Record-filter decision for this match (asked once per game process).
     allowed_pid: Option<(u32, bool)>,
 }
@@ -464,6 +512,7 @@ impl Engine {
             live: LiveClient::new(),
             session: None,
             suppressed_pid: None,
+            armed: false,
             allowed_pid: None,
         }
     }
@@ -479,15 +528,24 @@ impl Engine {
             match self.rx.recv_timeout(tick) {
                 Ok(Command::StartManual) => {
                     if self.session.is_none() {
-                        let target = if self.procs.game_pid().is_some() {
-                            CaptureTarget::App { bundle_id: GAME_BUNDLE_ID.into() }
+                        // Never the whole screen: record League's game now if
+                        // it's up, otherwise as soon as it appears.
+                        let target = CaptureTarget::App { bundle_id: GAME_BUNDLE_ID.into() };
+                        if self.procs.game_pid().is_some() && timewarp_capture::target_is_visible(&target) {
+                            self.start(target, true);
                         } else {
-                            CaptureTarget::MainDisplay
-                        };
-                        self.start(target, true);
+                            self.armed = true;
+                            self.suppressed_pid = None;
+                            self.set(|s| s.phase = Phase::Armed);
+                        }
                     }
                 }
                 Ok(Command::Stop) => {
+                    if self.armed && self.session.is_none() {
+                        self.armed = false;
+                        self.set(|s| s.phase = Phase::Idle);
+                        continue;
+                    }
                     self.suppressed_pid = self.procs.game_pid();
                     self.finish();
                 }
@@ -512,9 +570,22 @@ impl Engine {
         match &mut self.session {
             None => {
                 let Some(pid) = pid else {
-                    self.set(|s| s.phase = Phase::Idle);
+                    let phase = if self.armed { Phase::Armed } else { Phase::Idle };
+                    self.set(|s| s.phase = phase);
                     return;
                 };
+                let target = CaptureTarget::App { bundle_id: GAME_BUNDLE_ID.into() };
+                // Armed by the record button: this match records regardless
+                // of auto-record and the match filter.
+                if self.armed {
+                    if timewarp_capture::target_is_visible(&target) {
+                        self.armed = false;
+                        self.start(target, false);
+                    } else {
+                        self.set(|s| s.phase = Phase::WaitingForWindow);
+                    }
+                    return;
+                }
                 if !self.config.auto_record || self.suppressed_pid == Some(pid) {
                     return;
                 }
@@ -533,7 +604,6 @@ impl Engine {
                     self.set(|s| s.phase = Phase::Skipped);
                     return;
                 }
-                let target = CaptureTarget::App { bundle_id: GAME_BUNDLE_ID.into() };
                 if timewarp_capture::target_is_visible(&target) {
                     self.start(target, false);
                 } else {
