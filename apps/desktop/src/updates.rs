@@ -124,8 +124,15 @@ pub fn updates_configured() -> bool {
 
 /// Fetches and verifies the signed manifest of the latest release.
 fn latest(client: &reqwest::blocking::Client) -> Result<Option<Manifest>, String> {
-    let slug = slug().ok_or("No GitHub repository is set for updates.")?;
-    let base = format!("https://github.com/{slug}/releases/latest/download");
+    // TIMEWARP_UPDATE_URL points at a local test server. Safe to allow: the
+    // manifest must still be signed with the release key.
+    let base = match std::env::var("TIMEWARP_UPDATE_URL") {
+        Ok(url) if !url.is_empty() => url.trim_end_matches('/').to_string(),
+        _ => {
+            let slug = slug().ok_or("No GitHub repository is set for updates.")?;
+            format!("https://github.com/{slug}/releases/latest/download")
+        }
+    };
     let get = |name: &str| -> Result<Option<Vec<u8>>, String> {
         let resp = client
             .get(format!("{base}/{name}"))
@@ -379,11 +386,6 @@ open "$target"
 /// Call once the window is up: tells a waiting helper the update worked,
 /// and returns the version that was rolled back, if the last one failed.
 pub fn launched() -> Option<String> {
-    let dir = update_dir();
-    if !dir.exists() {
-        return None;
-    }
-    let _ = std::fs::write(dir.join("launched"), VERSION);
     if let Some(bundle) = running_bundle() {
         // Left over from an update that was downloaded but never restarted.
         let staged = staged_path(&bundle);
@@ -391,6 +393,11 @@ pub fn launched() -> Option<String> {
             let _ = std::fs::remove_dir_all(staged);
         }
     }
+    let dir = update_dir();
+    if !dir.exists() {
+        return None;
+    }
+    let _ = std::fs::write(dir.join("launched"), VERSION);
     let failed = std::fs::read_to_string(dir.join("failed")).ok()?;
     let _ = std::fs::remove_file(dir.join("failed"));
     Some(failed.trim().to_string())
@@ -460,9 +467,10 @@ impl TimewarpApp {
             cx.notify();
             return;
         }
-        let (Some(staged), Some(bundle), State::Ready(release)) =
-            (lock(&self.updater).staged.clone(), running_bundle(), self.update_state())
-        else {
+        // Separate statement: the guard must be gone before update_state()
+        // locks again (std's Mutex isn't reentrant; this froze 0.1.0).
+        let staged = lock(&self.updater).staged.clone();
+        let (Some(staged), Some(bundle), State::Ready(release)) = (staged, running_bundle(), self.update_state()) else {
             return;
         };
         let dir = update_dir();

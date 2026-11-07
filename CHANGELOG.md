@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 (unreleased)
+
+- Fixed: Timewarp froze when you clicked Restart to install an update.
+- The Updates card text stays inside the card.
+
 ## 0.1.1 (2026-11-07)
 
 - Timewarp has its own app icon.
