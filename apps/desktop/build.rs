@@ -12,12 +12,32 @@ fn main() {
     let root = manifest.join("../..");
     println!("cargo:rerun-if-changed={}", root.join("Cargo.lock").display());
     println!("cargo:rerun-if-changed=build.rs");
+    commit(&root);
     let out = PathBuf::from(std::env::var("OUT_DIR").unwrap()).join("licenses.json");
     let data = collect(&root).unwrap_or_else(|e| {
         println!("cargo:warning=couldn't list licences: {e}");
         json!({ "packages": [], "texts": [] })
     });
     std::fs::write(out, serde_json::to_vec(&data).unwrap()).unwrap();
+}
+
+/// The commit this was built from, for About and bug reports. Empty when
+/// there's no git (e.g. a source tarball).
+fn commit(root: &Path) {
+    let git = root.join(".git");
+    for p in ["HEAD", "refs/heads", "packed-refs"] {
+        println!("cargo:rerun-if-changed={}", git.join(p).display());
+    }
+    let sha = std::process::Command::new("git")
+        .args(["rev-parse", "--short=8", "HEAD"])
+        .current_dir(root)
+        .output()
+        .ok()
+        .filter(|o| o.status.success())
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .or_else(|| std::env::var("GITHUB_SHA").ok().map(|s| s.chars().take(8).collect()))
+        .unwrap_or_default();
+    println!("cargo:rustc-env=TIMEWARP_COMMIT={sha}");
 }
 
 fn collect(root: &Path) -> Result<Value, String> {

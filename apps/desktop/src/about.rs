@@ -9,6 +9,13 @@ use crate::ui::{self, icon};
 use crate::{TimewarpApp, theme};
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+/// Short git commit of this build (empty without git).
+pub const COMMIT: &str = env!("TIMEWARP_COMMIT");
+
+/// "0.1.0 (3f9c2a1b)", or just the version without a commit.
+pub fn version_line() -> String {
+    if COMMIT.is_empty() { VERSION.to_string() } else { format!("{VERSION} ({COMMIT})") }
+}
 /// From `repository` in the workspace Cargo.toml.
 pub const REPO: &str = env!("CARGO_PKG_REPOSITORY");
 const CHANGELOG: &str = include_str!("../../../CHANGELOG.md");
@@ -69,7 +76,7 @@ fn system() -> String {
 
 impl TimewarpApp {
     fn about_overview(&self, cx: &mut Context<Self>) -> AnyElement {
-        let info = format!("Timewarp {VERSION}, {}", system());
+        let info = format!("Timewarp {}, {}", version_line(), system());
         let link = |id: &'static str, glyph: IconName, label: &'static str, url: String| {
             ui::solid_button(id, theme::raised())
                 .child(icon(glyph, 14., theme::text()))
@@ -100,7 +107,27 @@ impl TimewarpApp {
                     .items_center()
                     .gap_1()
                     .child(div().text_2xl().font_weight(FontWeight::SEMIBOLD).child("Timewarp"))
-                    .child(div().text_sm().text_color(theme::muted()).child(format!("Version {VERSION}")))
+                    .child(
+                        div()
+                            .flex()
+                            .gap_1()
+                            .text_sm()
+                            .text_color(theme::muted())
+                            .child(format!("Version {VERSION}"))
+                            .when(!COMMIT.is_empty(), |d| {
+                                let url = format!("{REPO}/commit/{COMMIT}");
+                                d.child("·").child(
+                                    div()
+                                        .id("about-commit")
+                                        .font_family("Menlo")
+                                        .cursor_pointer()
+                                        .hover(|s| s.text_color(theme::accent()))
+                                        .child(COMMIT)
+                                        .tooltip(ui::tip("The commit this build was made from"))
+                                        .on_click(move |_, _, cx| cx.open_url(&url)),
+                                )
+                            }),
+                    )
                     .child(div().pt_1().max_w(px(420.)).text_center().text_color(theme::muted()).child(
                         "Records your League of Legends games and helps you learn from them.",
                     )),

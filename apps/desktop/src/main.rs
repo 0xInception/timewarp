@@ -1209,7 +1209,10 @@ impl TimewarpApp {
         let s = &self.status;
         let recording = matches!(s.phase, Phase::Recording | Phase::Finalizing);
         let armed = s.phase == Phase::Armed;
+        // Permission or folder missing: don't promise to record.
+        let blocked = s.phase == Phase::Idle && self.checks.iter().any(|c| c.blocking());
         let (title, detail): (String, Option<String>) = match s.phase {
+            Phase::Idle if blocked => ("Can't record yet".into(), Some("Finish Setup first".into())),
             Phase::Armed => ("Waiting for League".into(), Some("Records your game once it opens".into())),
             Phase::Recording => (
                 format!("Recording {}", theme::fmt_clock(s.elapsed.as_secs_f64())),
@@ -1243,6 +1246,8 @@ impl TimewarpApp {
                     .gap_2()
                     .child(div().size(px(8.)).flex_none().rounded_full().bg(if recording || armed {
                         theme::live()
+                    } else if blocked {
+                        theme::death()
                     } else if self.config.auto_record {
                         theme::assist()
                     } else {
@@ -1600,6 +1605,7 @@ fn apply_theme(cx: &mut App) {
 
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    log::info!("Timewarp {}", about::version_line());
     gpui_kit::application().with_assets(ui::AppAssets).run(|cx| {
         gpui_kit::init(cx);
         apply_theme(cx);

@@ -180,7 +180,7 @@ impl TimewarpApp {
                 20.,
                 if blocking { theme::death() } else if issues > 0 { theme::kill() } else { theme::assist() },
             ))
-            .child(div().flex().flex_col().child(div().font_weight(FontWeight::SEMIBOLD).child(match (blocking, issues) {
+            .child(div().flex_1().min_w_0().flex().flex_col().child(div().font_weight(FontWeight::SEMIBOLD).child(match (blocking, issues) {
                 (_, 0) => "Everything's ready".to_string(),
                 (true, _) => "Timewarp can't record yet".to_string(),
                 (false, 1) => "1 thing could use your attention".to_string(),
