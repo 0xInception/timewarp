@@ -692,10 +692,10 @@ impl TimewarpApp {
                     .flex()
                     .items_center()
                     .gap_2()
-                    .child(div().flex_1().text_xs().text_color(theme::muted()).child(
+                    .child(div().flex_1().min_w_0().text_xs().text_color(theme::muted()).child(
                         "Timewarp checks once a day and lets you know. Nothing downloads until you click Update, and only releases signed with the Timewarp release key are accepted.",
                     ))
-                    .child(ui::ghost_button("update-auto-off").text_xs().child("Turn off").on_click(
+                    .child(ui::ghost_button("update-auto-off").flex_none().text_xs().child("Turn off").on_click(
                         cx.listener(|this, _, _, cx| this.update_config(|c| c.check_updates = false, cx)),
                     ))
             } else {
@@ -703,10 +703,10 @@ impl TimewarpApp {
                     .flex()
                     .items_center()
                     .gap_2()
-                    .child(div().flex_1().text_xs().text_color(theme::muted()).child(
+                    .child(div().flex_1().min_w_0().text_xs().text_color(theme::muted()).child(
                         "Automatic checks are off, so Timewarp never contacts GitHub on its own. It only checks when you click Check for updates.",
                     ))
-                    .child(ui::ghost_button("update-auto-on").text_xs().child("Check daily").on_click(
+                    .child(ui::ghost_button("update-auto-on").flex_none().text_xs().child("Check daily").on_click(
                         cx.listener(|this, _, _, cx| this.update_config(|c| c.check_updates = true, cx)),
                     ))
             })

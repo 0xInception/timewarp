@@ -162,6 +162,9 @@ pub struct TimewarpApp {
     /// Keyboard focus row/card in Games and Clips (separate from selection),
     /// and their scroll positions so it stays in view.
     pub list_cursor: Option<PathBuf>,
+    /// Draw the cursor outline: only while using the keyboard, like macOS
+    /// focus rings. Clicks still move the cursor, without the outline.
+    pub cursor_ring: bool,
     /// Recently deleted: a pending "Delete forever" confirmation.
     pub deleted_confirm: Option<deleted::Confirm>,
     pub about_tab: about::AboutTab,
@@ -289,6 +292,7 @@ impl TimewarpApp {
             checks: vec![],
             palette: None,
             list_cursor: None,
+            cursor_ring: false,
             deleted_confirm: None,
             about_tab: Default::default(),
             about_open: None,
@@ -1156,6 +1160,7 @@ impl TimewarpApp {
         if self.page != page || self.review.is_some() || self.clip_view.is_some() {
             self.record_history(cx);
         }
+        self.cursor_ring = false;
         if page != self.page {
             self.selected.clear();
             self.selected_clips.clear();

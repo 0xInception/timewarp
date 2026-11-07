@@ -474,7 +474,7 @@ impl TimewarpApp {
         let date = c.meta.created_at.map(|d| d.format("%b %-d").to_string()).unwrap_or_default();
         let selected = self.selected_clips.contains(&c.path);
         let selecting = !self.selected_clips.is_empty();
-        let focused = self.list_cursor.as_ref() == Some(&c.path);
+        let focused = self.cursor_ring && self.list_cursor.as_ref() == Some(&c.path);
         let path = c.path.clone();
         div()
             .id(("clip-card", idx))
@@ -578,6 +578,7 @@ impl TimewarpApp {
                 let m = ev.modifiers();
                 let path = this.clips[idx].path.clone();
                 this.list_cursor = Some(path.clone());
+                this.cursor_ring = false;
                 if m.shift {
                     let anchor = this.clip_anchor.unwrap_or(idx);
                     let (lo, hi) = (anchor.min(idx), anchor.max(idx));

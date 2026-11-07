@@ -162,7 +162,7 @@ impl TimewarpApp {
 
         let selected = self.selected.contains(&g.path);
         let selecting = !self.selected.is_empty();
-        let focused = self.list_cursor.as_ref() == Some(&g.path);
+        let focused = self.cursor_ring && self.list_cursor.as_ref() == Some(&g.path);
         div()
             .id(("game", idx))
             .group("game-row")
@@ -292,6 +292,7 @@ impl TimewarpApp {
                 let m = ev.modifiers();
                 let path = this.games[idx].path.clone();
                 this.list_cursor = Some(path.clone());
+                this.cursor_ring = false;
                 if m.shift {
                     this.select_range_to(idx);
                 } else if m.platform || !this.selected.is_empty() {

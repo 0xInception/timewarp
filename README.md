@@ -2,6 +2,10 @@
 
 Records your League of Legends games on macOS and helps you learn from them.
 
+![Home](docs/screenshots/home.png)
+![Reviewing a game](docs/screenshots/review.png)
+![Games](docs/screenshots/games.png)
+
 ```
 cargo run --release -p timewarp-desktop
 ```

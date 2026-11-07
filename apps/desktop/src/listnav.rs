@@ -55,6 +55,7 @@ impl TimewarpApp {
                     self.selected.insert(path.clone());
                 }
                 self.list_cursor = Some(path);
+                self.cursor_ring = true;
                 self.select_anchor = Some(order[next]);
                 if let Some(child) = self.game_child_index(order[next]) {
                     self.games_scroll.scroll_to_item(child);
@@ -118,6 +119,7 @@ impl TimewarpApp {
                 self.selected_clips.insert(path.clone());
             }
             self.list_cursor = Some(path);
+            self.cursor_ring = true;
             self.clip_anchor = Some(next);
             self.clips_scroll.scroll_to_item(next);
             true
